@@ -1,0 +1,47 @@
+Step2: Controller
+
+Controller Mapping
+"/api/auth"
+
+SQL :
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+
+======================================
+POST
+/signup
+
+insert a JSON: Formal 
+username 
+email
+password --> response encode
+role [id , name]
+
+[Three funciton]
+bulid_User(JSON)
+bulid_roles(JSON)
+bulid_user_roles(getUserbyID(),JSON)
+
+[1]
+users.bulider()
+.username(JSON.username)
+.email(JSON.email)
+.password(JSON.password)
+.bulid()
+
+[2]
+roles.bulider()
+.id(Json.roles.id)
+.name(Json.roles.name)
+
+[3]
+user_roles.bulider()
+.user_id(id)
+.role_id(Json.roles.id)
+
+
+
+
+
+

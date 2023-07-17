@@ -1,0 +1,77 @@
+Quiz3 
+Solve JAVA_home
+find dependance
+WEB 
+actutor 
+Dev Tools
+Lombok
+jdbc
+mysql-connector-jav
+
+
+create model 
+create controller --> mapper 
+create 
+
+Text six explain Question:
+
+1.Please try to explain the below concept in Spring Framework including 
+• Inversion of Control, 
+• Dependency injection 
+• Aspect-Oriented Programming MVC  + DDD
+
+You need to prepare on follow question:
+• What is the concept do in spring?
+• Use case on the concept?
+• How to use in coding?
+Face to Face explain the concept when you submit the quiz. You may draft some diagram or ppt to explain (not necessary).
+
+Dependence:
+
+
+
+Step[1] Model:
+==================
+public users
+
+@NotNull
+@size(20)
+@auto_increment 
+@primary_key
+int id --> bigint(20)
+
+@Null
+String email --> varchar(50)
+
+@Null 
+String password 
+
+@Null
+String username
+
+=====================
+public roles
+
+@NotNull
+@size(20)
+@auto_increment
+@primary_key
+int id --> int(11)
+
+@Null
+String name --> varchar(20)
+
+======================
+public user_roles
+
+@NotNull
+@size(20)
+@primary_key
+int user_id --> bigint(20)
+
+@NotNull
+@size(11)
+@primary_key
+int role_id --> int(11)
+
+
