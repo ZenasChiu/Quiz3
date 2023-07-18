@@ -1,0 +1,6 @@
+{
+  "username": "mod",
+  "email": "mod@bezkoder.com",
+  "password": "mod",
+  "role": ["user","mod"]
+}
