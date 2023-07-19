@@ -34,31 +34,45 @@ public class mainController {
     }
 
     @PostMapping("/auth/signin")
-    public ResponseEntity<Map<String, Object>> signInUsers(@RequestBody Map<String, Object> JSON , HttpServletResponse response) throws Exception{
-
-        Cookie cookie = new Cookie( "username" , JSON.get("username").toString());
+    public ResponseEntity<Map<String, Object>> signInUsers(@RequestBody Map<String, Object> JSON ,
+                                                           HttpServletResponse response) throws Exception{
         Map<String,Object> Header = new HashMap<>();
+        String temp_password = JSON.get("password").toString();
+        JSON.put("password", Base64.getEncoder().encodeToString(temp_password.getBytes()));
 
         if(system_auth_services.loginValidation(JSON)){
-            cookie.setMaxAge(7*24*60*60);
-            cookie.setSecure(true);
+            Cookie cookie = new Cookie( JSON.get("username").toString(),JSON.get("password").toString());
+            cookie.setPath("/api");
             cookie.setHttpOnly(true);
-            // 將Cookie 物件加入Response 中
             response.addCookie(cookie);
             Header = system_auth_services.getUserDetails(JSON);
         }
         else{
             Header.put("message","Sorry invalid username or password!");
         }
-        // 設置過期時間，若無設置時間，其生命週期將持續到Session 過期為止
 
         return new ResponseEntity(Header,HttpStatus.OK);
     }
 
     @PostMapping("/auth/signout")
-    public ResponseEntity removeUsers(@RequestBody Map<String, Object> JSON , HttpServletResponse response) throws Exception{
+    public ResponseEntity<String> removeUsers(HttpServletResponse response ,HttpServletRequest request) throws Exception{
+        String header ="You are sign out";
+        Cookie[] cookies = request.getCookies();
 
-        return new ResponseEntity("Null",HttpStatus.BAD_REQUEST);
+        if (cookies == null) {
+            header = "Please sign in";
+        }
+        else{
+            for(Cookie c : cookies){
+                c.setValue("");
+                c.setPath("/");
+                c.setMaxAge(-1);
+                c.setHttpOnly(false);
+                response.addCookie(c);
+            }
+        }
+
+        return new ResponseEntity(header ,HttpStatus.OK);
     }
 
     @GetMapping({"/test/all"})
@@ -67,36 +81,67 @@ public class mainController {
         return new ResponseEntity(header,HttpStatus.OK);
     }
 
-
-    @GetMapping({"/test/user"})
-    public ResponseEntity getRole_userResource(HttpServletRequest request, HttpServletResponse response){
-        String header = "";
-        Cookie[] cookies = request.getCookies();
+    public Boolean accessValidaiton(Cookie[] cookies, int accessLevelRequired){
         if (cookies == null) {
-            header = "Please sign in";
+            return false;
         }
         else {
+            System.out.println("have cookie");
             for(Cookie c : cookies){
-                System.out.println(c.getValue());
-                String tempName = c.getValue();
-                if(system_test_services.accessValidation(tempName) >= 1){
-                    header = system_test_services.getUserContent();
-                    return new ResponseEntity(header,HttpStatus.OK);
+                String tempName = c.getName();
+                String password = c.getValue();
+                Map<String, Object> tempAccess = new HashMap<>();
+                tempAccess.put("username",tempName);
+                tempAccess.put("password",password);
+                System.out.println(system_auth_services.loginValidation(tempAccess));
+                if(system_auth_services.loginValidation(tempAccess)){
+                    System.out.println(system_test_services.accessValidation(tempName));
+                    if(system_test_services.accessValidation(tempName) >= accessLevelRequired){
+                        return true;
+                    }
                 }
             }
         }
-        return new ResponseEntity(header,HttpStatus.UNAUTHORIZED);
+        return false;
+    }
+
+    @GetMapping({"/test/user"})
+    public ResponseEntity<String> getRole_userResource(HttpServletRequest request){
+        String header = "";
+        Cookie[] cookies = request.getCookies();
+        if (accessValidaiton(cookies, 1)) {
+            header = system_test_services.getUserContent();
+            return new ResponseEntity(header,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(header,HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping({"/test/mod"})
-    public ResponseEntity getRole_Moderator_Resource(){
-
-        return new ResponseEntity("Null",HttpStatus.BAD_REQUEST);
+    public ResponseEntity getRole_Moderator_Resource(HttpServletRequest request){
+        String header = "";
+        Cookie[] cookies = request.getCookies();
+        if (accessValidaiton(cookies, 2)) {
+            header = system_test_services.getModeratorContent();
+            return new ResponseEntity(header,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(header,HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping({"/test/admin"})
-    public ResponseEntity getRole_Admin_Resource(){
-        return new ResponseEntity("Null",HttpStatus.BAD_REQUEST);
+    public ResponseEntity getRole_Admin_Resource(HttpServletRequest request){
+        String header = "";
+        Cookie[] cookies = request.getCookies();
+        if (accessValidaiton(cookies, 3)) {
+            header = system_test_services.getAdminContent();
+            return new ResponseEntity(header,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(header,HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }

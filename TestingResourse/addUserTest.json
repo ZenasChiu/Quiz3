@@ -1,6 +1,22 @@
 {
   "username": "mod",
   "email": "mod@bezkoder.com",
-  "password": "mod",
-  "role": ["user","mod"]
+  "password": "9991230",
+  "role": [
+    "user",
+    "mod",
+    "admin"
+  ],
+  "username": "ben",
+  "email": "ben@bezkoder.com",
+  "password": "999888",
+  "role": [
+    "user",
+    "mod"
+  ]
+{
+  "username": "happy",
+  "email": "happy@bezkoder.com",
+  "password": "123",
+  "role": ["admin"]
 }

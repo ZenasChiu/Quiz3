@@ -25,8 +25,13 @@ public class System_Test_ServicesImpl implements System_Test_Services {
     public int accessValidation(String tempName) {//can improve
         Users dbUser = userRepository.findUserIdByName(tempName);
         List<String> user_roles = userRepository.findUser_role(dbUser.getId());
+        System.out.println(tempName);
+        System.out.println(tempName.toString());
+        System.out.println(dbUser.getId());
+        System.out.println(user_roles);
         int accessLevel = 0;
         for(int i = 0; i < user_roles.size();i++){
+            System.out.println(user_roles.get(i));
             switch (user_roles.get(i)){
                 case "ROLE_USER" : accessLevel = 1 ;break;
                 case "ROLE_MODERATOR" : accessLevel = 2 ;break;
@@ -44,5 +49,15 @@ public class System_Test_ServicesImpl implements System_Test_Services {
     @Override
     public String getUserContent() {
         return "User Content.";
+    }
+
+    @Override
+    public String getModeratorContent() {
+        return "Moderator Board.";
+    }
+
+    @Override
+    public String getAdminContent() {
+        return "Admin Content.";
     }
 }

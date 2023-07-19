@@ -6,4 +6,8 @@ public interface System_Test_Services {
     String getUserContent();
 
     int accessValidation(String tempName);
+
+    String getModeratorContent();
+
+    String getAdminContent();
 }

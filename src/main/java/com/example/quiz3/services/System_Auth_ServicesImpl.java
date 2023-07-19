@@ -22,7 +22,9 @@ public class System_Auth_ServicesImpl implements System_Auth_Services {
     @Override
     public String createUsers(Map<String, Object> json) {
             users = new Users();
-            users.setPassword(json.get("password").toString());
+            String temp_password = json.get("password").toString();
+            temp_password = Base64.getEncoder().encodeToString(temp_password.getBytes());
+            users.setPassword(temp_password);
             users.setUsername(json.get("username").toString());
             users.setEmail(json.get("email").toString());
             userRepository.addUser(users);
@@ -43,6 +45,8 @@ public class System_Auth_ServicesImpl implements System_Auth_Services {
     public
     Boolean loginValidation(Map<String, Object> json){
         Users dbUser = userRepository.findUserIdByName(json.get("username").toString());
+        System.out.println(dbUser.getPassword());
+        System.out.println(json.get("password"));
         if(dbUser.getPassword().equals(json.get("password"))){
             return true;
         }
